@@ -404,8 +404,8 @@ function Sidebar({ populaires, onPick }) {
 
       <div style={{ background: COLORS.ink, color: "#fff", borderRadius: 14, padding: 14, fontSize: 12.5 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}><MapPin size={14} color={COLORS.yellow} /> Atelier FAJAR</div>
-        <div style={{ color: "#C9BC9F" }}>Dakar, Sénégal</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8 }}><Phone size={14} color={COLORS.yellow} /> 77 000 00 00</div>
+        <div style={{ color: "#C9BC9F" }}>Malika Cité Sonatel, Dakar</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8 }}><Phone size={14} color={COLORS.yellow} /> +221 71 165 84 20</div>
       </div>
     </div>
   );
@@ -496,9 +496,12 @@ function Footer() {
           <div style={{ background: "#fff", borderRadius: 10, padding: "6px 10px", display: "flex" }}>
             <img src={LOGO_SRC} alt="" style={{ height: 30 }} />
           </div>
-          <span style={{ fontSize: 12.5 }}>© {new Date().getFullYear()} GIE FAJAR — Dakar, Sénégal</span>
+          <span style={{ fontSize: 12.5 }}>© {new Date().getFullYear()} GIE FAJAR — Malika Cité Sonatel, Dakar</span>
         </div>
-        <div style={{ fontSize: 12.5 }}>contact@fajar.sn</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12.5, flexWrap: "wrap" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={13} color={COLORS.yellow} /> +221 71 165 84 20</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}><MapPin size={13} color={COLORS.yellow} /> Malika Cité Sonatel, Dakar</span>
+        </div>
       </div>
     </div>
   );
