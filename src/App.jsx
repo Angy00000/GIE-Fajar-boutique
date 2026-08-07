@@ -211,29 +211,34 @@ export default function App() {
                     {meta.subtitle}
                   </div>
                 )}
-                {groups.length > 1 && (
-                  <div style={{ display: "flex", gap: 7, overflowX: "auto", scrollbarWidth: "none", marginBottom: 16, paddingBottom: 2 }}>
-                    {groups.map((g) => {
-                      const isActive = activeFlavor[cat] === g.id;
-                      return (
-                        <button key={g.id} onClick={() => selectFlavor(cat, g.id)} style={{
-                          flexShrink: 0, padding: "8px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: "pointer",
-                          border: `1.5px solid ${isActive ? COLORS.ink : COLORS.line}`,
-                          background: isActive ? COLORS.ink : "#fff", color: isActive ? "#fff" : COLORS.ink, whiteSpace: "nowrap",
-                        }}>{shortLabel(g.name)}</button>
-                      );
-                    })}
-                  </div>
-                )}
-                {(groups.length <= 1 || activeFlavor[cat]) && (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 16 }}>
-                    {(groups.length > 1 ? groups.filter((g) => g.id === activeFlavor[cat]) : groups).map((g) => (
-                      <div key={g.id} ref={(el) => (productRefs.current[g.id] = el)}>
-                        <ProductGroupCard group={g} cart={cart} onChange={addToCart} />
+                {(() => {
+                  const currentFlavorId = activeFlavor[cat] || groups[0]?.id;
+                  return (
+                    <>
+                      {groups.length > 1 && (
+                        <div style={{ display: "flex", gap: 7, overflowX: "auto", scrollbarWidth: "none", marginBottom: 16, paddingBottom: 2 }}>
+                          {groups.map((g) => {
+                            const isActive = currentFlavorId === g.id;
+                            return (
+                              <button key={g.id} onClick={() => selectFlavor(cat, g.id)} style={{
+                                flexShrink: 0, padding: "8px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: "pointer",
+                                border: `1.5px solid ${isActive ? COLORS.ink : COLORS.line}`,
+                                background: isActive ? COLORS.ink : "#fff", color: isActive ? "#fff" : COLORS.ink, whiteSpace: "nowrap",
+                              }}>{shortLabel(g.name)}</button>
+                            );
+                          })}
+                        </div>
+                      )}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 16 }}>
+                        {(groups.length > 1 ? groups.filter((g) => g.id === currentFlavorId) : groups).map((g) => (
+                          <div key={g.id} ref={(el) => (productRefs.current[g.id] = el)}>
+                            <ProductGroupCard group={g} cart={cart} onChange={addToCart} />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </>
+                  );
+                })()}
               </div>
             );
           })}
