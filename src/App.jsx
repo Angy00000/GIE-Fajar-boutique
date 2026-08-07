@@ -24,9 +24,9 @@ const SEED_PRODUCTS = [
   { id: "p4", name: "Jus de bissap blanc", cat: "Jus naturels", price: 100, stock: 0, unit: "50cl" , image: "/produits/jus-bissap-blanc-50cl.jpg" },
   { id: "p5", name: "Jus de bouye", cat: "Jus naturels", price: 1000, stock: 4, unit: "1L" , image: "/produits/jus-bouye-1l.jpg" },
   { id: "p6", name: "Jus de bouye", cat: "Jus naturels", price: 100, stock: 0, unit: "50cl" , image: "/produits/jus-bouye-50cl.jpg" },
-  { id: "p7", name: "Jus de madd", cat: "Jus naturels", price: 1000, stock: 0, unit: "1L" },
+  { id: "p7", name: "Jus de madd", cat: "Jus naturels", price: 1000, stock: 0, unit: "1L" , image: "/produits/jus-madd-1l.jpg" },
   { id: "p8", name: "Jus de madd", cat: "Jus naturels", price: 100, stock: 0, unit: "50cl" , image: "/produits/jus-madd-50cl.jpg" },
-  { id: "p9", name: "Jus de moringa", cat: "Jus naturels", price: 1000, stock: 6, unit: "1L", popular: true },
+  { id: "p9", name: "Jus de moringa", cat: "Jus naturels", price: 1000, stock: 6, unit: "1L", popular: true , image: "/produits/jus-moringa-1l.jpg" },
   { id: "p10", name: "Jus de moringa", cat: "Jus naturels", price: 100, stock: 0, unit: "50cl" , image: "/produits/jus-moringa-50cl.jpg" },
   { id: "p11", name: "Jus de tamarin", cat: "Jus naturels", price: 1000, stock: 0, unit: "1L" , image: "/produits/jus-tamarin-1l.jpg" },
   { id: "p12", name: "Jus de tamarin", cat: "Jus naturels", price: 100, stock: 1, unit: "50cl" , image: "/produits/jus-tamarin-50cl.jpg" },
@@ -34,7 +34,7 @@ const SEED_PRODUCTS = [
   { id: "p14", name: "Jus de gingembre", cat: "Jus naturels", price: 100, stock: 0, unit: "50cl" , image: "/produits/jus-gingembre-50cl.jpg" },
 
   // Sirops & concentrés
-  { id: "p15", name: "Sirop de bissap rouge", cat: "Sirops & concentrés", price: 2000, stock: 5, unit: "1L", popular: true },
+  { id: "p15", name: "Sirop de bissap rouge", cat: "Sirops & concentrés", price: 2000, stock: 5, unit: "1L", popular: true , image: "/produits/sirop-bissap-rouge-1l.jpg" },
   { id: "p16", name: "Sirop de bissap blanc", cat: "Sirops & concentrés", price: 2000, stock: 0, unit: "1L" , image: "/produits/sirop-bissap-blanc-1l.jpg" },
   { id: "p17", name: "Sirop de bouye", cat: "Sirops & concentrés", price: 2000, stock: 0, unit: "1L" , image: "/produits/sirop-bouye-1l.jpg" },
   { id: "p18", name: "Sirop de gingembre", cat: "Sirops & concentrés", price: 2000, stock: 0, unit: "1L" , image: "/produits/sirop-gingembre-1l.jpg" },
@@ -43,7 +43,7 @@ const SEED_PRODUCTS = [
 
   // Confitures
   { id: "p21", name: "Confiture de mangue", cat: "Confitures", price: 1500, stock: 0, unit: "370g" , image: "/produits/confiture-mangue.jpg" },
-  { id: "p22", name: "Confiture de madd", cat: "Confitures", price: 1500, stock: 2, unit: "370g" },
+  { id: "p22", name: "Confiture de madd", cat: "Confitures", price: 1500, stock: 2, unit: "370g" , image: "/produits/confiture-madd.jpg" },
 
   // Chutneys
   { id: "p23", name: "Chutney bissap", cat: "Chutneys", price: 1500, stock: 12, unit: "370g" , image: "/produits/chutney-bissap.jpg" },
