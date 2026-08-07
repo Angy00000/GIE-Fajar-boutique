@@ -501,6 +501,7 @@ function Footer() {
         <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12.5, flexWrap: "wrap" }}>
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={13} color={COLORS.yellow} /> +221 71 165 84 20</span>
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}><MapPin size={13} color={COLORS.yellow} /> Malika Cité Sonatel, Dakar</span>
+          <span>giefajar0@gmail.com</span>
         </div>
       </div>
     </div>
