@@ -308,7 +308,7 @@ function Hero() {
       </div>
       <div style={{
         position: "absolute", inset: 0,
-        background: `linear-gradient(180deg, ${COLORS.cream}E6 0%, ${COLORS.cream}CC 40%, ${COLORS.cream}F2 100%)`,
+        background: `linear-gradient(180deg, ${COLORS.cream}33 0%, ${COLORS.cream}1A 45%, ${COLORS.cream}59 100%)`,
       }} />
       <div style={{
         maxWidth: 1080, margin: "0 auto", padding: "40px 16px 44px", position: "relative",
@@ -322,11 +322,11 @@ function Hero() {
         </div>
         <div style={{
           fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: "clamp(20px, 3vw, 28px)",
-          color: COLORS.ink, letterSpacing: 0.2,
+          color: COLORS.ink, letterSpacing: 0.2, textShadow: "0 2px 16px rgba(255,251,243,0.9), 0 1px 3px rgba(255,251,243,0.9)",
         }}>
           Les saveurs du terroir, transformées avec soin
         </div>
-        <div style={{ color: COLORS.muted, fontSize: 13.5, fontWeight: 500, maxWidth: 480 }}>
+        <div style={{ color: COLORS.ink, fontSize: 13.5, fontWeight: 600, maxWidth: 480, textShadow: "0 2px 12px rgba(255,251,243,0.9), 0 1px 3px rgba(255,251,243,0.9)" }}>
           Jus, sirops et confitures artisanaux — bissap, bouye, gingembre, mangue, tamarin.
         </div>
       </div>
