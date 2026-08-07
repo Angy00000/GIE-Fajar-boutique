@@ -16,6 +16,34 @@ const COLORS = {
   muted: "#7A6C51",
 };
 
+const CAT_META = {
+  "Jus naturels": {
+    icon: "🧃", overline: "Pressés le jour même",
+    subtitle: "De bissap au moringa, en passant par le bouye et le madd — 100% naturels, sans additifs.",
+  },
+  "Sirops & concentrés": {
+    icon: "🍹", overline: "À diluer ou en cocktail",
+    subtitle: "Concentrés artisanaux, parfaits pour twister vos boissons et sublimer vos cocktails.",
+  },
+  "Confitures": {
+    icon: "🍓", overline: "Fruits locaux mijotés",
+    subtitle: "Pots de 370g, cuits doucement pour préserver le goût des fruits du terroir.",
+  },
+  "Chutneys": {
+    icon: "🌶️", overline: "Condiments relevés",
+    subtitle: "Le compagnon parfait de vos plats — bissap et citron, en pots de 370g.",
+  },
+};
+
+function groupByFlavor(catProducts) {
+  const map = new Map();
+  for (const p of catProducts) {
+    if (!map.has(p.name)) map.set(p.name, []);
+    map.get(p.name).push(p);
+  }
+  return [...map.entries()].map(([name, variants]) => ({ id: `${variants[0].cat}::${name}`, name, variants }));
+}
+
 const SEED_PRODUCTS = [
   // Jus naturels
   { id: "p1", name: "Jus de bissap rouge", cat: "Jus naturels", price: 1000, stock: 3, unit: "1L", popular: true , image: "/produits/jus-bissap-rouge-1l.jpg" },
@@ -161,26 +189,41 @@ export default function App() {
         <div>
           {cats.map((cat) => {
             const catProducts = products.filter((p) => p.cat === cat);
+            const groups = groupByFlavor(catProducts);
+            const meta = CAT_META[cat] || { icon: "🌿", overline: "Fait maison à Dakar", subtitle: "" };
             return (
-              <div key={cat} ref={(el) => (sectionRefs.current[cat] = el)} style={{ marginBottom: 30, scrollMarginTop: 128 }}>
-                <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18, margin: "0 0 8px", display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ width: 6, height: 18, background: COLORS.red, borderRadius: 3 }} />
+              <div key={cat} ref={(el) => (sectionRefs.current[cat] = el)} style={{ marginBottom: 44, scrollMarginTop: 128 }}>
+                <div style={{
+                  fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase",
+                  color: COLORS.red, marginBottom: 6, display: "flex", alignItems: "center", gap: 6,
+                }}>
+                  <span style={{ fontSize: 14 }}>{meta.icon}</span> {meta.overline}
+                </div>
+                <h2 style={{
+                  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: "clamp(21px, 3.4vw, 28px)",
+                  letterSpacing: 0.2, margin: "0 0 6px", textTransform: "uppercase",
+                }}>
                   {cat}
                 </h2>
-                {catProducts.length > 1 && (
-                  <div style={{ display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none", marginBottom: 12, paddingBottom: 2 }}>
-                    {catProducts.map((p) => (
-                      <button key={p.id} onClick={() => scrollToProduct(cat, p.id)} style={{
-                        flexShrink: 0, padding: "5px 11px", borderRadius: 999, fontSize: 11.5, fontWeight: 600, cursor: "pointer",
-                        border: `1px solid ${COLORS.line}`, background: "#fff", color: COLORS.muted, whiteSpace: "nowrap",
-                      }}>{shortLabel(p.name)} {p.unit ? `· ${p.unit}` : ""}</button>
+                {meta.subtitle && (
+                  <div style={{ color: COLORS.muted, fontSize: 13, maxWidth: 520, marginBottom: 16, lineHeight: 1.5 }}>
+                    {meta.subtitle}
+                  </div>
+                )}
+                {groups.length > 1 && (
+                  <div style={{ display: "flex", gap: 7, overflowX: "auto", scrollbarWidth: "none", marginBottom: 16, paddingBottom: 2 }}>
+                    {groups.map((g) => (
+                      <button key={g.id} onClick={() => scrollToProduct(cat, g.id)} style={{
+                        flexShrink: 0, padding: "8px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: "pointer",
+                        border: `1px solid ${COLORS.line}`, background: "#fff", color: COLORS.ink, whiteSpace: "nowrap",
+                      }}>{shortLabel(g.name)}</button>
                     ))}
                   </div>
                 )}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12 }}>
-                  {catProducts.map((p) => (
-                    <div key={p.id} ref={(el) => (productRefs.current[p.id] = el)} style={{ scrollMarginTop: 170 }}>
-                      <ProductCard product={p} qty={cart[p.id] || 0} onChange={addToCart} />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 16 }}>
+                  {groups.map((g) => (
+                    <div key={g.id} ref={(el) => (productRefs.current[g.id] = el)} style={{ scrollMarginTop: 170 }}>
+                      <ProductGroupCard group={g} cart={cart} onChange={addToCart} />
                     </div>
                   ))}
                 </div>
@@ -304,10 +347,10 @@ function CatNav({ cats, active, onSelect }) {
       }}>
         {cats.map((c) => (
           <button key={c} onClick={() => onSelect(c)} style={{
-            flexShrink: 0, padding: "7px 14px", borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: "pointer",
-            border: `1px solid ${active === c ? COLORS.red : COLORS.line}`,
-            background: active === c ? COLORS.red : "#fff", color: active === c ? "#fff" : COLORS.ink,
-            whiteSpace: "nowrap",
+            flexShrink: 0, padding: "8px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: "pointer",
+            border: `1.5px solid ${active === c ? COLORS.ink : COLORS.line}`,
+            background: active === c ? COLORS.ink : "#fff", color: active === c ? "#fff" : COLORS.ink,
+            whiteSpace: "nowrap", fontFamily: "'Space Grotesk', sans-serif",
           }}>{c}</button>
         ))}
       </div>
@@ -355,42 +398,73 @@ function Sidebar({ populaires, onPick }) {
   );
 }
 
-function ProductCard({ product, qty, onChange }) {
-  const outOfStock = product.stock === 0;
+function ProductGroupCard({ group, cart, onChange }) {
+  const { variants } = group;
+  const defaultId = (variants.find((v) => v.stock > 0) || variants[0]).id;
+  const [selectedId, setSelectedId] = useState(defaultId);
+  const selected = variants.find((v) => v.id === selectedId) || variants[0];
+  const outOfStock = selected.stock === 0;
+  const qty = cart[selected.id] || 0;
+  const isPopular = variants.some((v) => v.popular);
+  const isNew = ["p9", "p15"].includes(variants[0]?.id);
+
   return (
     <div style={{
-      background: COLORS.card, border: `1px solid ${COLORS.line}`, borderRadius: 12, padding: 10,
-      display: "flex", flexDirection: "column", gap: 6, opacity: outOfStock ? 0.5 : 1,
+      background: COLORS.card, border: `1px solid ${COLORS.line}`, borderRadius: 16, padding: 12,
+      display: "flex", flexDirection: "column", gap: 8,
+      boxShadow: "0 10px 26px -18px rgba(36,27,18,0.25)",
     }}>
       <div style={{
-        position: "relative", height: 82, borderRadius: 9, overflow: "hidden",
-        background: product.image ? "#fff" : `linear-gradient(150deg, ${COLORS.yellow}2a, ${COLORS.red}20)`,
+        position: "relative", height: 128, borderRadius: 12, overflow: "hidden",
+        background: selected.image ? "#fff" : `linear-gradient(150deg, ${COLORS.yellow}2a, ${COLORS.red}20)`,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        {product.image ? (
-          <img src={product.image} alt={product.name} style={{ height: "100%", width: "100%", objectFit: "contain" }} />
+        {selected.image ? (
+          <img src={selected.image} alt={group.name} style={{ height: "100%", width: "100%", objectFit: "contain" }} />
         ) : (
-          <ShoppingBasket size={24} color={COLORS.red} strokeWidth={1.6} />
+          <ShoppingBasket size={30} color={COLORS.red} strokeWidth={1.6} />
         )}
-        {product.popular && !outOfStock && (
-          <span style={{ position: "absolute", top: 6, left: 6, background: COLORS.green, color: "#fff", fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 999 }}>Populaire</span>
+        {isPopular && (
+          <span style={{ position: "absolute", top: 8, left: 8, background: COLORS.green, color: "#fff", fontSize: 9.5, fontWeight: 700, padding: "3px 8px", borderRadius: 999, letterSpacing: 0.3 }}>TOP VENTE</span>
+        )}
+        {!isPopular && isNew && (
+          <span style={{ position: "absolute", top: 8, left: 8, background: COLORS.yellow, color: COLORS.ink, fontSize: 9.5, fontWeight: 700, padding: "3px 8px", borderRadius: 999, letterSpacing: 0.3 }}>NOUVEAU</span>
         )}
       </div>
-      <div style={{ fontWeight: 700, fontSize: 12.5, lineHeight: 1.25, minHeight: 32 }}>{product.name}</div>
-      <div style={{ fontSize: 11, color: COLORS.muted }}>{product.unit}</div>
-      <div style={{ fontWeight: 700, fontSize: 13.5 }}>{money(product.price)}</div>
-      {outOfStock ? (
-        <div style={{ fontSize: 11, color: COLORS.red, fontWeight: 700, textAlign: "center", padding: "6px 0" }}>Rupture</div>
-      ) : qty === 0 ? (
-        <button onClick={() => onChange(product.id, 1)} style={{
-          background: COLORS.red, color: "#fff", border: "none", borderRadius: 8, padding: "7px 0",
-          fontWeight: 700, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
-        }}><Plus size={13} /> Ajouter</button>
+
+      <div style={{ fontWeight: 700, fontSize: 13.5, lineHeight: 1.25, fontFamily: "'Space Grotesk', sans-serif" }}>{group.name}</div>
+
+      {variants.length > 1 ? (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+          {variants.map((v) => (
+            <button key={v.id} onClick={() => setSelectedId(v.id)} disabled={v.stock === 0} style={{
+              padding: "5px 9px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: v.stock === 0 ? "not-allowed" : "pointer",
+              border: `1.5px solid ${v.id === selectedId ? COLORS.ink : COLORS.line}`,
+              background: v.id === selectedId ? COLORS.ink : "#fff",
+              color: v.id === selectedId ? "#fff" : (v.stock === 0 ? COLORS.muted : COLORS.ink),
+              opacity: v.stock === 0 ? 0.5 : 1, textDecoration: v.stock === 0 ? "line-through" : "none",
+            }}>{v.unit} · {money(v.price)}</button>
+          ))}
+        </div>
       ) : (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: COLORS.sand, borderRadius: 8, padding: "4px 6px" }}>
-          <button onClick={() => onChange(product.id, -1)} style={{ border: "none", background: "#fff", borderRadius: 6, width: 24, height: 24, cursor: "pointer" }}><Minus size={12} style={{ margin: "auto" }} /></button>
-          <span style={{ fontWeight: 700, fontSize: 13 }}>{qty}</span>
-          <button onClick={() => onChange(product.id, 1)} disabled={qty >= product.stock} style={{ border: "none", background: "#fff", borderRadius: 6, width: 24, height: 24, cursor: "pointer" }}><Plus size={12} style={{ margin: "auto" }} /></button>
+        <div style={{ fontSize: 11, color: COLORS.muted }}>{selected.unit}</div>
+      )}
+
+      <div style={{ fontWeight: 800, fontSize: 16, marginTop: 2 }}>{money(selected.price)}</div>
+
+      {outOfStock ? (
+        <div style={{ fontSize: 11.5, color: COLORS.red, fontWeight: 700, textAlign: "center", padding: "8px 0", background: `${COLORS.red}12`, borderRadius: 8 }}>Rupture de stock</div>
+      ) : qty === 0 ? (
+        <button onClick={() => onChange(selected.id, 1)} style={{
+          background: COLORS.red, color: "#fff", border: "none", borderRadius: 999, padding: "9px 0",
+          fontWeight: 700, fontSize: 12.5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+          fontFamily: "'Space Grotesk', sans-serif",
+        }}><Plus size={14} /> Commander</button>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: COLORS.sand, borderRadius: 999, padding: "4px 6px" }}>
+          <button onClick={() => onChange(selected.id, -1)} style={{ border: "none", background: "#fff", borderRadius: 999, width: 26, height: 26, cursor: "pointer" }}><Minus size={13} style={{ margin: "auto" }} /></button>
+          <span style={{ fontWeight: 700, fontSize: 13.5 }}>{qty}</span>
+          <button onClick={() => onChange(selected.id, 1)} disabled={qty >= selected.stock} style={{ border: "none", background: "#fff", borderRadius: 999, width: 26, height: 26, cursor: "pointer" }}><Plus size={13} style={{ margin: "auto" }} /></button>
         </div>
       )}
     </div>
