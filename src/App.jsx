@@ -245,18 +245,27 @@ function Header({ cartCount }) {
 }
 
 function Hero() {
+  const images = [
+    "/hero/toasts-confitures.jpg",
+    "/hero/cocktails.jpg",
+    "/hero/fruits-splash.jpg",
+    "/hero/jus-splash.jpg",
+  ];
   return (
-    <div style={{
-      position: "relative", overflow: "hidden",
-      background: `linear-gradient(135deg, ${COLORS.yellow} 0%, ${COLORS.red} 75%)`,
-    }}>
+    <div style={{ position: "relative", overflow: "hidden", minHeight: 280 }}>
+      <div className="fajar-hero-collage" style={{
+        position: "absolute", inset: 0, display: "grid",
+        gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr",
+      }}>
+        {images.map((src) => (
+          <div key={src} style={{ overflow: "hidden" }}>
+            <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          </div>
+        ))}
+      </div>
       <div style={{
-        position: "absolute", top: "-30%", left: "-10%", width: 340, height: 340, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%)",
-      }} />
-      <div style={{
-        position: "absolute", bottom: "-35%", right: "-8%", width: 300, height: 300, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%)",
+        position: "absolute", inset: 0,
+        background: `linear-gradient(180deg, ${COLORS.cream}E6 0%, ${COLORS.cream}CC 40%, ${COLORS.cream}F2 100%)`,
       }} />
       <div style={{
         maxWidth: 1080, margin: "0 auto", padding: "40px 16px 44px", position: "relative",
@@ -264,17 +273,17 @@ function Hero() {
       }}>
         <div style={{
           background: "#fff", borderRadius: 28, padding: "24px 36px",
-          boxShadow: "0 24px 55px -18px rgba(36,27,18,0.5)",
+          boxShadow: "0 24px 55px -18px rgba(36,27,18,0.35)",
         }} className="fajar-hero-logo-wrap">
           <img src={LOGO_SRC} alt="GIE FAJAR" className="fajar-hero-logo" />
         </div>
         <div style={{
           fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: "clamp(20px, 3vw, 28px)",
-          color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.15)", letterSpacing: 0.2,
+          color: COLORS.ink, letterSpacing: 0.2,
         }}>
           Les saveurs du terroir, transformées avec soin
         </div>
-        <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 13.5, fontWeight: 500, maxWidth: 480 }}>
+        <div style={{ color: COLORS.muted, fontSize: 13.5, fontWeight: 500, maxWidth: 480 }}>
           Jus, sirops et confitures artisanaux — bissap, bouye, gingembre, mangue, tamarin.
         </div>
       </div>
