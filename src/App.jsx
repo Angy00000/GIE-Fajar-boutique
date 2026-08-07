@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { ShoppingBasket, Plus, Minus, X, Check, Clock, Star, MapPin, Phone } from "lucide-react";
+import { ShoppingBasket, Plus, Minus, X, Check, Clock, Star, MapPin, Phone, Facebook, Instagram } from "lucide-react";
+
+function TikTokIcon({ size = 13, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+      <path d="M16.6 5.82c-.9-.87-1.47-2.06-1.6-3.32h-3.13v13.9c0 1.5-1.22 2.72-2.72 2.72a2.72 2.72 0 0 1-2.72-2.72 2.72 2.72 0 0 1 2.72-2.72c.24 0 .48.03.7.09v-3.17a5.9 5.9 0 0 0-.7-.04A5.86 5.86 0 0 0 3.29 16.4a5.86 5.86 0 0 0 5.86 5.86 5.86 5.86 0 0 0 5.86-5.86V9.05a8.34 8.34 0 0 0 4.88 1.56V7.48a5.13 5.13 0 0 1-3.29-1.66z"/>
+    </svg>
+  );
+}
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');`;
 const LOGO_SRC = "/logo.png";
@@ -502,6 +510,11 @@ function Footer() {
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={13} color={COLORS.yellow} /> +221 71 165 84 20</span>
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}><MapPin size={13} color={COLORS.yellow} /> Malika Cité Sonatel, Dakar</span>
           <span>giefajar0@gmail.com</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <a href="https://www.facebook.com/share/18s7ARP2Wg/" target="_blank" rel="noopener noreferrer" style={{ color: "#B8AC96", display: "flex" }}><Facebook size={16} /></a>
+            <a href="https://www.instagram.com/gie_fajar?igsh=eGNmcTU0NnhxeXVo" target="_blank" rel="noopener noreferrer" style={{ color: "#B8AC96", display: "flex" }}><Instagram size={16} /></a>
+            <a href="https://www.tiktok.com/@gie.fajar?_r=1&_t=ZS-98gmMvHiQNA" target="_blank" rel="noopener noreferrer" style={{ color: "#B8AC96", display: "flex" }}><TikTokIcon size={16} color="#B8AC96" /></a>
+          </div>
         </div>
       </div>
     </div>
