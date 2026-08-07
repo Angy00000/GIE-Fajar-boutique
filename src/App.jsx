@@ -100,6 +100,7 @@ export default function App() {
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeCat, setActiveCat] = useState(null);
+  const [activeFlavor, setActiveFlavor] = useState({});
   const sectionRefs = useRef({});
   const productRefs = useRef({});
 
@@ -155,9 +156,9 @@ export default function App() {
     sectionRefs.current[cat]?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function scrollToProduct(cat, id) {
+  function selectFlavor(cat, id) {
     setActiveCat(cat);
-    productRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setActiveFlavor((prev) => ({ ...prev, [cat]: prev[cat] === id ? null : id }));
   }
 
   function shortLabel(name) {
@@ -212,21 +213,27 @@ export default function App() {
                 )}
                 {groups.length > 1 && (
                   <div style={{ display: "flex", gap: 7, overflowX: "auto", scrollbarWidth: "none", marginBottom: 16, paddingBottom: 2 }}>
-                    {groups.map((g) => (
-                      <button key={g.id} onClick={() => scrollToProduct(cat, g.id)} style={{
-                        flexShrink: 0, padding: "8px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: "pointer",
-                        border: `1px solid ${COLORS.line}`, background: "#fff", color: COLORS.ink, whiteSpace: "nowrap",
-                      }}>{shortLabel(g.name)}</button>
+                    {groups.map((g) => {
+                      const isActive = activeFlavor[cat] === g.id;
+                      return (
+                        <button key={g.id} onClick={() => selectFlavor(cat, g.id)} style={{
+                          flexShrink: 0, padding: "8px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: "pointer",
+                          border: `1.5px solid ${isActive ? COLORS.ink : COLORS.line}`,
+                          background: isActive ? COLORS.ink : "#fff", color: isActive ? "#fff" : COLORS.ink, whiteSpace: "nowrap",
+                        }}>{shortLabel(g.name)}</button>
+                      );
+                    })}
+                  </div>
+                )}
+                {(groups.length <= 1 || activeFlavor[cat]) && (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 16 }}>
+                    {(groups.length > 1 ? groups.filter((g) => g.id === activeFlavor[cat]) : groups).map((g) => (
+                      <div key={g.id} ref={(el) => (productRefs.current[g.id] = el)}>
+                        <ProductGroupCard group={g} cart={cart} onChange={addToCart} />
+                      </div>
                     ))}
                   </div>
                 )}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 16 }}>
-                  {groups.map((g) => (
-                    <div key={g.id} ref={(el) => (productRefs.current[g.id] = el)} style={{ scrollMarginTop: 170 }}>
-                      <ProductGroupCard group={g} cart={cart} onChange={addToCart} />
-                    </div>
-                  ))}
-                </div>
               </div>
             );
           })}
