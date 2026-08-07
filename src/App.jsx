@@ -126,9 +126,10 @@ export default function App() {
 
   function addToCart(id, delta) {
     const product = products.find((p) => p.id === id);
+    const cap = product.stock > 0 ? product.stock : 10; // precommande possible si rupture, plafonnee a 10
     setCart((c) => {
       const current = c[id] || 0;
-      const next = Math.max(0, Math.min(product.stock, current + delta));
+      const next = Math.max(0, Math.min(cap, current + delta));
       return { ...c, [id]: next };
     });
   }
@@ -143,7 +144,7 @@ export default function App() {
     const nextOrders = [order, ...orders];
     const nextProducts = products.map((p) => {
       const inCart = cart[p.id] || 0;
-      return inCart ? { ...p, stock: p.stock - inCart } : p;
+      return inCart ? { ...p, stock: Math.max(0, p.stock - inCart) } : p;
     });
     setOrders(nextOrders); setProducts(nextProducts);
     await saveStorage(KEY_ORDERS, nextOrders);
@@ -422,14 +423,13 @@ function ProductGroupCard({ group, cart, onChange }) {
 
   return (
     <div style={{
-      background: COLORS.card, border: `1px solid ${COLORS.line}`, borderRadius: 16, padding: 12,
-      display: "flex", flexDirection: "column", gap: 8,
-      boxShadow: "0 10px 26px -18px rgba(36,27,18,0.25)",
+      background: COLORS.card, border: `1px solid ${COLORS.line}`, borderRadius: 16,
+      display: "flex", flexDirection: "column", overflow: "hidden",
+      boxShadow: "0 10px 26px -18px rgba(36,27,18,0.22)",
     }}>
       <div style={{
-        position: "relative", height: 128, borderRadius: 12, overflow: "hidden",
-        background: selected.image ? "#fff" : `linear-gradient(150deg, ${COLORS.yellow}2a, ${COLORS.red}20)`,
-        display: "flex", alignItems: "center", justifyContent: "center",
+        position: "relative", height: 132, background: selected.image ? "#fff" : `linear-gradient(150deg, ${COLORS.yellow}2a, ${COLORS.red}20)`,
+        display: "flex", alignItems: "center", justifyContent: "center", borderBottom: `1px solid ${COLORS.line}`,
       }}>
         {selected.image ? (
           <img src={selected.image} alt={group.name} style={{ height: "100%", width: "100%", objectFit: "contain" }} />
@@ -442,43 +442,48 @@ function ProductGroupCard({ group, cart, onChange }) {
         {!isPopular && isNew && (
           <span style={{ position: "absolute", top: 8, left: 8, background: COLORS.yellow, color: COLORS.ink, fontSize: 9.5, fontWeight: 700, padding: "3px 8px", borderRadius: 999, letterSpacing: 0.3 }}>NOUVEAU</span>
         )}
+        {outOfStock && (
+          <span style={{ position: "absolute", top: 8, right: 8, background: COLORS.ink, color: "#fff", fontSize: 9.5, fontWeight: 700, padding: "3px 8px", borderRadius: 999, letterSpacing: 0.3 }}>SUR COMMANDE</span>
+        )}
       </div>
 
-      <div style={{ fontWeight: 700, fontSize: 13.5, lineHeight: 1.25, fontFamily: "'Space Grotesk', sans-serif" }}>{group.name}</div>
+      <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ fontWeight: 700, fontSize: 13.5, lineHeight: 1.25, fontFamily: "'Space Grotesk', sans-serif" }}>{group.name}</div>
 
-      {variants.length > 1 ? (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-          {variants.map((v) => (
-            <button key={v.id} onClick={() => setSelectedId(v.id)} disabled={v.stock === 0} style={{
-              padding: "5px 9px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: v.stock === 0 ? "not-allowed" : "pointer",
-              border: `1.5px solid ${v.id === selectedId ? COLORS.ink : COLORS.line}`,
-              background: v.id === selectedId ? COLORS.ink : "#fff",
-              color: v.id === selectedId ? "#fff" : (v.stock === 0 ? COLORS.muted : COLORS.ink),
-              opacity: v.stock === 0 ? 0.5 : 1, textDecoration: v.stock === 0 ? "line-through" : "none",
-            }}>{v.unit} · {money(v.price)}</button>
-          ))}
+        {variants.length > 1 ? (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+            {variants.map((v) => (
+              <button key={v.id} onClick={() => setSelectedId(v.id)} style={{
+                padding: "5px 9px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer",
+                border: `1.5px solid ${v.id === selectedId ? COLORS.ink : COLORS.line}`,
+                background: v.id === selectedId ? COLORS.ink : "#fff",
+                color: v.id === selectedId ? "#fff" : COLORS.ink,
+              }}>{v.unit} · {money(v.price)}</button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ fontSize: 11, color: COLORS.muted }}>{selected.unit}</div>
+        )}
+
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: 2 }}>
+          <span style={{ fontWeight: 800, fontSize: 16 }}>{money(selected.price)}</span>
+          {outOfStock && <span style={{ fontSize: 10.5, color: COLORS.muted, fontWeight: 600 }}>Livraison différée</span>}
         </div>
-      ) : (
-        <div style={{ fontSize: 11, color: COLORS.muted }}>{selected.unit}</div>
-      )}
 
-      <div style={{ fontWeight: 800, fontSize: 16, marginTop: 2 }}>{money(selected.price)}</div>
-
-      {outOfStock ? (
-        <div style={{ fontSize: 11.5, color: COLORS.red, fontWeight: 700, textAlign: "center", padding: "8px 0", background: `${COLORS.red}12`, borderRadius: 8 }}>Rupture de stock</div>
-      ) : qty === 0 ? (
-        <button onClick={() => onChange(selected.id, 1)} style={{
-          background: COLORS.red, color: "#fff", border: "none", borderRadius: 999, padding: "9px 0",
-          fontWeight: 700, fontSize: 12.5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-          fontFamily: "'Space Grotesk', sans-serif",
-        }}><Plus size={14} /> Commander</button>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: COLORS.sand, borderRadius: 999, padding: "4px 6px" }}>
-          <button onClick={() => onChange(selected.id, -1)} style={{ border: "none", background: "#fff", borderRadius: 999, width: 26, height: 26, cursor: "pointer" }}><Minus size={13} style={{ margin: "auto" }} /></button>
-          <span style={{ fontWeight: 700, fontSize: 13.5 }}>{qty}</span>
-          <button onClick={() => onChange(selected.id, 1)} disabled={qty >= selected.stock} style={{ border: "none", background: "#fff", borderRadius: 999, width: 26, height: 26, cursor: "pointer" }}><Plus size={13} style={{ margin: "auto" }} /></button>
-        </div>
-      )}
+        {qty === 0 ? (
+          <button onClick={() => onChange(selected.id, 1)} style={{
+            background: outOfStock ? COLORS.ink : COLORS.red, color: "#fff", border: "none", borderRadius: 999, padding: "9px 0",
+            fontWeight: 700, fontSize: 12.5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+            fontFamily: "'Space Grotesk', sans-serif",
+          }}><Plus size={14} /> {outOfStock ? "Précommander" : "Commander"}</button>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: COLORS.sand, borderRadius: 999, padding: "4px 6px" }}>
+            <button onClick={() => onChange(selected.id, -1)} style={{ border: "none", background: "#fff", borderRadius: 999, width: 26, height: 26, cursor: "pointer" }}><Minus size={13} style={{ margin: "auto" }} /></button>
+            <span style={{ fontWeight: 700, fontSize: 13.5 }}>{qty}</span>
+            <button onClick={() => onChange(selected.id, 1)} disabled={qty >= (selected.stock > 0 ? selected.stock : 10)} style={{ border: "none", background: "#fff", borderRadius: 999, width: 26, height: 26, cursor: "pointer" }}><Plus size={13} style={{ margin: "auto" }} /></button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
